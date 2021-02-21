@@ -3,10 +3,17 @@ import { Link } from 'react-router-dom';
 import './Header.css';
 import header from '../../images/header.png';
 import logo from '../../images/icons/logo.png';
+import firebase from "firebase/app";
 import { UserContext } from '../../App';
 
 const Header = () => {
-    const [, setLoggedInUser] = useContext(UserContext);
+    const [loggedInUser, setLoggedInUser] = useContext(UserContext);
+
+    const handleSignOut = () => {
+        firebase.auth().signOut().then(() => {
+            setLoggedInUser({});
+        });
+    }
 
     return (
         <div style={{ backgroundImage: `linear-gradient( rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5) ), url(${header})` }} className="header">
@@ -21,11 +28,12 @@ const Header = () => {
                     <li>
                         <Link className="btn-book" to="/book">Book</Link>
                     </li>
-                    <li>
-                        <Link to="/login">Login</Link>
-                    </li>
-                    <li>
-                        <button onClick={()=>setLoggedInUser({})}>Logout</button>
+                   <li>
+                        {
+                            loggedInUser.email
+                            ? <button onClick={handleSignOut}>Logout</button>
+                            : <Link to="/login">Login</Link>
+                        }
                     </li>
                 </ul>
             </nav>
